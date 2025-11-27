@@ -1,3 +1,5 @@
+# Without PVC → PostgreSQL = stateless → all data lost.
+# PVC = actual hard disk. Deployment = app.
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -9,6 +11,7 @@ spec:
     requests:
       storage: 1Gi
 ---
+# Runs PostgreSQL container (Pods = ephemeral)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -43,18 +46,20 @@ spec:
           persistentVolumeClaim:
             claimName: postgres-pvc
 ---
+# To access Postgres from your laptop (localhost:30032).
 apiVersion: v1
 kind: Service
 metadata:
   name: postgres
 spec:
-  type: NodePort   # You can access DB from your laptop
+  type: NodePort   # You can access DB from your laptop, (real world - Ingress + ClusterIP)
   ports:
     - port: 5432
       targetPort: 5432
       nodePort: 30032   # Access using localhost:30032
   selector:
     app: postgres
+
 
 # kubectl apply -f postgres.yaml
 # kubectl get pods
