@@ -65,3 +65,8 @@ spec:
 # kubectl get pods
 # kubectl get svc
 # psql -h localhost -p 30032 -U admin -d testdb -> connect to database
+# kubectl delete -f postgres.yaml
+# kubectl delete deployment <deployment-name>
+# kubectl delete service <service-name>
+# kubectl delete pvc <pvc-name>
+# kubectl delete pv <pv-name>
