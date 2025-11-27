@@ -1,5 +1,5 @@
 # Without PVC → PostgreSQL = stateless → all data lost.
-# PVC = actual hard disk. Deployment = app.
+# Permanent storage/disk where actual DB data is saved
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -11,7 +11,7 @@ spec:
     requests:
       storage: 1Gi
 ---
-# Runs PostgreSQL container (Pods = ephemeral)
+# Runs PostgreSQL container (Pods = ephemeral) -> Runs the Postgres process
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:15
+          image: postgres:15 #The Docker image ONLY provides the Postgres software
           env:
             - name: POSTGRES_USER
               value: "admin"
@@ -44,9 +44,9 @@ spec:
       volumes:
         - name: postgres-storage
           persistentVolumeClaim:
-            claimName: postgres-pvc
+            claimName: postgres-pvc # "Give this pod a dedicated disk space that survives restarts."
 ---
-# To access Postgres from your laptop (localhost:30032).
+# Makes the pod reachable from other apps
 apiVersion: v1
 kind: Service
 metadata:
